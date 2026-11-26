@@ -32,22 +32,23 @@ input:focus,select:focus{border-color:var(--green)}
 select option{background:var(--card);color:var(--txt)}
 
 /* ---------- Splash ---------- */
-#splash{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:var(--bg);transition:opacity .6s,visibility .6s}
+#splash{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:rgba(8,5,27,.55);-webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);transition:opacity .5s,visibility .5s;touch-action:manipulation}
 #splash.bye{opacity:0;visibility:hidden}
-.splash-orbit{position:relative;width:150px;height:150px;display:grid;place-items:center}
-.splash-ring{position:absolute;inset:0;border-radius:50%;border:2px solid transparent}
-.splash-ring.r1{border-top-color:var(--green);border-inline-end-color:var(--green);animation:spin 1.6s linear infinite}
-.splash-ring.r2{inset:14px;border-bottom-color:var(--purple);animation:spin 2.4s linear infinite reverse}
-.splash-logo{animation:pop .8s cubic-bezier(.2,1.6,.4,1) both .2s;filter:drop-shadow(0 0 18px #5eeaa088)}
-.splash-name{font-size:28px;font-weight:800;letter-spacing:.5px}
-.splash-name span{color:var(--green)}
-.splash-tag{color:var(--muted);font-size:14px}
-.splash-bar{width:120px;height:4px;border-radius:4px;background:var(--line);overflow:hidden}
-.splash-bar i{display:block;height:100%;width:40%;border-radius:4px;background:linear-gradient(90deg,var(--green),var(--green2));animation:load 1.2s ease-in-out infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pop{from{transform:scale(.3);opacity:0}}
-@keyframes load{0%{transform:translateX(-140%)}100%{transform:translateX(320%)}}
-[dir=ltr] .splash-bar i{animation-name:loadL}
+.intro-card{width:min(84vw,380px);box-sizing:border-box;padding:30px 26px;border-radius:26px;border:1px solid #ffffff40;background:linear-gradient(145deg,#ffffff2e,#22c55e14);-webkit-backdrop-filter:blur(20px) saturate(1.6);backdrop-filter:blur(20px) saturate(1.6);box-shadow:0 22px 70px #0000008c,inset 0 1px 0 #ffffff55;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;animation:introCardIn .7s cubic-bezier(.2,.9,.25,1.15) both}
+#splash.bye .intro-card{animation:introCardOut .45s ease-in both}
+.intro-logo{filter:drop-shadow(0 0 18px #5eeaa088);animation:introTextIn .6s .1s ease-out both}
+.intro-name{font-size:22px;font-weight:800;letter-spacing:.5px;animation:introTextIn .6s .15s ease-out both}
+.intro-name span{color:var(--green)}
+.intro-phrase{min-height:24px;font-size:16px;color:#e9fff1;text-shadow:0 0 18px #5eeaa088;animation:introTextIn .6s .2s ease-out both}
+.intro-caret{display:inline-block;width:2px;height:1em;margin-inline-start:4px;vertical-align:-2px;background:currentColor;animation:introCaret 1s steps(1) infinite}
+@keyframes introCardIn{from{opacity:0;transform:translateY(24px) scale(.82)}to{opacity:1;transform:none}}
+@keyframes introCardOut{to{opacity:0;transform:translateY(-22px) scale(.92)}}
+@keyframes introTextIn{from{opacity:0;letter-spacing:6px}to{opacity:1}}
+@keyframes introCaret{50%{opacity:0}}
+@media(prefers-reduced-motion:reduce){
+  #splash{display:none}
+  .intro-card,.intro-logo,.intro-name,.intro-phrase,.intro-caret{animation:none!important}
+}
 @keyframes loadL{0%{transform:translateX(-140%)}100%{transform:translateX(320%)}}
 
 /* ---------- Onboarding ---------- */

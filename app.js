@@ -26,7 +26,7 @@ function applyLang(){
   document.documentElement.lang=lang;
   document.documentElement.dir=d.dir;
   $$('[data-i]').forEach(el=>{ el.textContent=t(el.dataset.i); });
-  $('#splashTag').textContent=t('tagline');
+  if(!window.__nvIntroStarted) $('#splashTag').textContent=t('tagline');
   $('#btnTake').textContent='📷 '+t('takePhoto');
   $('#btnGallery').textContent='🖼 '+t('fromGallery');
   $('#btnManual').textContent='✍️ '+t('manualAdd');
@@ -147,10 +147,45 @@ $('#btnEditProfile').addEventListener('click',()=>{
   calcPreview();
 });
 
+/* ---------- glass intro card ---------- */
+function startIntro(){
+  const splash=$('#splash');
+  if(!splash) return;
+  const reduce=window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduce){ splash.remove(); return; }
+  window.__nvIntroStarted=true;
+  const tag=$('#splashTag');
+  const phrase=t('tagline');
+  let i=0, done=false;
+  tag.textContent='';
+  function dismiss(){
+    if(done) return;
+    done=true;
+    clearInterval(typer); clearTimeout(auto);
+    splash.classList.add('bye');
+    setTimeout(()=>splash.remove(),600);
+  }
+  const typer=setInterval(()=>{
+    tag.textContent=phrase.slice(0,++i);
+    if(i>=phrase.length){ clearInterval(typer); auto=setTimeout(dismiss,700); }
+  },65);
+  let auto=setTimeout(dismiss,(phrase.length*65)+1600); // safety cap
+  splash.addEventListener('pointerdown',dismiss,{capture:true});
+  document.addEventListener('pointerdown',function onDown(ev){
+    if(done) return;
+    // swallow the matching click so the dismissing tap never hits the UI underneath
+    document.addEventListener('click',function swallow(e){
+      e.stopPropagation(); e.preventDefault();
+      document.removeEventListener('click',swallow,true);
+    },{capture:true,once:true});
+    dismiss();
+  },{capture:true,once:true});
+}
+
 /* ---------- init ---------- */
 function init(){
   applyTheme();
-  setTimeout(()=>$('#splash').classList.add('bye'),1900);
+  startIntro();
   if(!S.profile.onboarded){ applyLang(); renderObSlide(); $('#onboarding').classList.remove('hidden'); return; }
   applyLang();
   $('#app').classList.remove('hidden');
