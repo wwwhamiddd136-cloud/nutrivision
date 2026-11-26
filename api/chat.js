@@ -32,7 +32,7 @@ export default async function handler(req, res) {
   if (!contents.length) return res.status(400).json({ ok: false, error: 'messages required' });
 
   try {
-    const model = process.env.GEMINI_MODEL || 'gemini-flash-latest';
+    const model = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
     const r = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
       {
