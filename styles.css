@@ -256,3 +256,12 @@ body.light #bottomnav{background:#fffffff2}
 .consent-body{white-space:pre-line;line-height:1.8;margin:6px 0 14px;font-size:14px;text-align:start}
 #aiConsentSheet .btn{width:100%;margin-top:8px}
 .est-note{margin:2px 4px 10px}
+
+/* auth */
+.auth-lab{display:block;margin:10px 0}
+.auth-lab span{display:block;font-size:13px;margin-bottom:4px;color:var(--muted,#9a8fb8)}
+.auth-lab input{width:100%;padding:11px 12px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:inherit;font-size:15px}
+.auth-err{min-height:18px;font-size:13px;color:#ff9d9d;margin:6px 0}
+.btn.big{width:100%;margin-top:8px}
+#authWho{margin:14px 0;font-size:15px;word-break:break-all}
+.small-txt{font-size:12px;margin-top:12px;line-height:1.6}

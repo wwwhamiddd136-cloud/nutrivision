@@ -47,6 +47,12 @@ ar: {
   clearConfirm: 'متأكد؟ غادي يتمسح كلشي من هاد الهاتف.',
   about: 'حول التطبيق', version: 'النسخة', privacyNote: 'التتبع ديالك كيبقى فهاتفك. غير الصور والرسائل ديال المسح والمساعد هوما لي كتتصيفط لـ Gemini (بموافقتك).',
   aiConsentTitle: 'الذكاء الاصطناعي والخصوصية',
+  account: 'الحساب', email: 'الإيميل', password: 'كلمة السر', signIn: 'تسجيل الدخول', signUp: 'خلق حساب', signOut: 'تسجيل الخروج',
+  signedInAs: 'مسجل باسم:', welcomeBack: 'مرحبا بيك', authNeedBoth: 'دخل الإيميل وكلمة السر', authNotConfigured: 'الحسابات ما مفعلاش',
+  authCheckEmail: 'شوف الإيميل ديالك باش تأكد الحساب', authErr: 'وقع خطأ، عاود',
+  authPrivacy: 'إلا سجلتي، كيتحفظ غير الإيميل والبروفايل (الاسم والقياسات) عند Supabase باش يتزامنو بين أجهزتك. الأكل والوزن كيبقاو فهاتفك.',
+  authPrivacyIn: 'المتزامن: البروفايل فقط. الأكل والوزن كيبقاو فهاتفك.',
+
   aiConsentBody: 'باش تستعمل المسح بالصور والمساعد الذكي:\n• الصور والرسائل ديالك كتتصيفط لـ Google Gemini باش تتحلل.\n• فالنسخة المجانية، يمكن لـ Google تستعمل هاد المعطيات باش تحسّن خدماتها.\n• باقي المعلومات ديالك (الاسم، الوزن، اليوميات...) كتبقى فهاتفك وما كتتصيفطش.\n• تقدر تبدل رأيك فوقت ما بغيتي من الإعدادات.',
   aiConsentYes: 'فهمت، موافق', aiConsentNo: 'دابا لا',
   aiConsentSet: 'تحليل الذكاء الاصطناعي (Gemini)', aiStatOn: 'مفعّل', aiStatOff: 'مش مفعّل',
@@ -102,6 +108,12 @@ fr: {
   clearConfirm: 'Sûr ? Tout sera effacé de ce téléphone.',
   about: 'À propos', version: 'Version', privacyNote: "Votre suivi reste sur votre téléphone. Seules les photos et les messages de l'assistant IA sont envoyés à Gemini (avec votre accord).",
   aiConsentTitle: 'IA et confidentialité',
+  account: 'Compte', email: 'E-mail', password: 'Mot de passe', signIn: 'Se connecter', signUp: 'Créer un compte', signOut: 'Se déconnecter',
+  signedInAs: 'Connecté :', welcomeBack: 'Bon retour', authNeedBoth: 'Entrez e-mail et mot de passe', authNotConfigured: 'Comptes non activés',
+  authCheckEmail: 'Vérifiez votre e-mail pour confirmer le compte', authErr: 'Erreur, réessayez',
+  authPrivacy: "Si vous créez un compte, seuls l'e-mail et le profil (nom, mensurations) sont stockés chez Supabase pour la synchronisation. Repas et poids restent sur votre téléphone.",
+  authPrivacyIn: 'Synchronisé : le profil uniquement. Repas et poids restent sur votre téléphone.',
+
   aiConsentBody: "Pour utiliser le scan photo et l'assistant IA :\n• Vos photos et vos messages sont envoyés à Google Gemini pour être analysés.\n• Avec l'offre gratuite, Google peut utiliser ces données pour améliorer ses services.\n• Tout le reste (nom, poids, journal...) reste sur votre téléphone et n'est jamais envoyé.\n• Vous pouvez changer d'avis à tout moment dans les réglages.",
   aiConsentYes: "J'ai compris, j'accepte", aiConsentNo: 'Pas maintenant',
   aiConsentSet: 'Analyse IA (Gemini)', aiStatOn: 'Activée', aiStatOff: 'Désactivée',
@@ -111,6 +123,12 @@ fr: {
   target: 'Objectif', kcalDay: 'kcal/jour',
 },
 en: {
+  account: 'Account', email: 'Email', password: 'Password', signIn: 'Sign in', signUp: 'Create account', signOut: 'Sign out',
+  signedInAs: 'Signed in as', welcomeBack: 'Welcome back', authNeedBoth: 'Enter email and password', authNotConfigured: 'Accounts not enabled',
+  authCheckEmail: 'Check your email to confirm the account', authErr: 'Something went wrong, try again',
+  authPrivacy: 'If you create an account, only your email and profile (name, body stats) are stored with Supabase to sync across devices. Meals and weight stay on your phone.',
+  authPrivacyIn: 'Synced: profile only. Meals and weight stay on your phone.',
+
   dir: 'ltr',
   appName: 'NutriVision',
   tagline: 'Snap your food. Understand your nutrition.',
@@ -157,6 +175,7 @@ en: {
   clearConfirm: 'Sure? Everything will be erased from this phone.',
   about: 'About', version: 'Version', privacyNote: 'Your tracking stays on your phone. Only AI scan photos and chat messages are sent to Gemini (with your consent).',
   aiConsentTitle: 'AI & privacy',
+
   aiConsentBody: 'To use photo scanning and the AI assistant:\n• Your photos and chat messages are sent to Google Gemini for analysis.\n• On the free tier, Google may use this data to improve its services.\n• Everything else (name, weight, diary...) stays on your phone and is never sent.\n• You can change your mind anytime in Settings.',
   aiConsentYes: 'Got it, I agree', aiConsentNo: 'Not now',
   aiConsentSet: 'AI analysis (Gemini)', aiStatOn: 'On', aiStatOff: 'Off',

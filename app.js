@@ -8,7 +8,7 @@ const LS_KEY = 'nutrivision.v1';
 let S = load();
 function load(){
   try { const s = JSON.parse(localStorage.getItem(LS_KEY)); if (s && s.profile) return s; } catch(e){}
-  return { profile:{name:'',sex:'m',age:null,height:null,weight:null,activity:1.375,goal:'keep',targetKcal:2000,lang:'ar',theme:'dark',onboarded:false},
+  return { profile:{name:'',sex:'m',age:null,height:null,weight:null,activity:1.375,goal:'keep',targetKcal:2000,lang:'ar',theme:'dark',onboarded:false},profileT:0,
            days:{}, weights:[], chat:[], aiConsent:false };
 }
 function save(){ localStorage.setItem(LS_KEY, JSON.stringify(S)); }
@@ -119,7 +119,8 @@ $('#profileForm').addEventListener('submit',e=>{
   p.sex=$('#sexSeg .on').dataset.v; p.age=+$('#fAge').value; p.height=+$('#fHeight').value;
   p.weight=+$('#fWeight').value; p.activity=+$('#fActivity').value; p.goal=$('#goalSeg .on').dataset.v;
   p.targetKcal=mifflin(p.sex,p.weight,p.height,p.age,p.activity,p.goal);
-  p.onboarded=true; save();
+  p.onboarded=true; S.profileT=Date.now(); save();
+  if(window.NVAuth) NVAuth.pushProfile();
   if(p.weight){ logWeight(p.weight); }
   $('#onboarding').classList.add('hidden');
   if(editingProfile){ editingProfile=false; $('#settingsSheet').classList.remove('hidden'); }

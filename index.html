@@ -209,6 +209,7 @@
         <div class="seg small" id="themeSeg"><button data-theme="dark"></button><button data-theme="light"></button></div></div>
       <button class="set-item" id="btnEditProfile"><span data-i="profileEdit"></span><span>›</span></button>
       <button class="set-item" id="btnExport"><span data-i="exportData"></span><span>›</span></button>
+      <button class="set-item" id="btnAccount"><span data-i="account"></span><span id="accountState" class="muted"></span></button>
       <button class="set-item" id="btnAiConsent"><span data-i="aiConsentSet"></span><span id="aiConsentState" class="muted"></span></button>
       <button class="set-item danger" id="btnClear"><span data-i="clearData"></span><span>›</span></button>
       <div class="muted center small-txt" id="privacyTxt"></div>
@@ -234,12 +235,35 @@
     </div>
   </div>
 
+
+  <!-- Account sheet (optional email login) -->
+  <div id="authSheet" class="sheet hidden">
+    <div class="sheet-card">
+      <div class="sheet-head"><h3 data-i="account"></h3><button class="icon-btn" id="closeAuth">✕</button></div>
+      <div id="authSignedOut">
+        <label class="auth-lab"><span data-i="email"></span><input id="authEmail" type="email" autocomplete="email" inputmode="email"></label>
+        <label class="auth-lab"><span data-i="password"></span><input id="authPass" type="password" autocomplete="current-password" minlength="6"></label>
+        <div class="auth-err muted" id="authErr"></div>
+        <button class="btn primary big" id="btnSignIn" data-i="signIn"></button>
+        <button class="btn ghost big" id="btnSignUp" data-i="signUp"></button>
+        <div class="muted center small-txt" data-i="authPrivacy"></div>
+      </div>
+      <div id="authSignedIn" class="hidden">
+        <div class="muted center" id="authWho"></div>
+        <button class="btn ghost big" id="btnSignOut" data-i="signOut"></button>
+        <div class="muted center small-txt" data-i="authPrivacyIn"></div>
+      </div>
+    </div>
+  </div>
   <div id="toast" class="hidden"></div>
 </div>
 
+<script src="supabase.js"></script>
 <script src="config.js"></script>
 <script src="i18n.js"></script>
 <script src="fooddb.js"></script>
 <script src="app.js"></script>
+<script src="auth.js"></script>
+<script src="authui.js"></script>
 </body>
 </html>

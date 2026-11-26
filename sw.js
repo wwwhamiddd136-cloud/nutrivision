@@ -1,7 +1,7 @@
 /* NutriVision AI service worker — app-shell cache, network-first for API */
-const CACHE = 'nutrivision-v1';
+const CACHE = 'nutrivision-v3';
 const SHELL = [
-  './', './index.html', './styles.css', './config.js', './i18n.js', './fooddb.js', './app.js',
+  './', './index.html', './styles.css', './config.js', './i18n.js', './fooddb.js', './app.js', './supabase.js', './auth.js', './authui.js',
   './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png'
 ];
 self.addEventListener('install', e => {
