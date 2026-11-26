@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#08051b">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>NutriVision AI</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Splash -->
+<div id="splash">
+  <div class="splash-orbit"><div class="splash-ring r1"></div><div class="splash-ring r2"></div>
+    <div class="splash-logo">
+      <svg viewBox="0 0 64 64" width="72" height="72"><use href="icon.svg#logo"/></svg>
+    </div>
+  </div>
+  <div class="splash-name">NutriVision <span>AI</span></div>
+  <div class="splash-tag" id="splashTag"></div>
+  <div class="splash-bar"><i></i></div>
+</div>
+
+<!-- Onboarding -->
+<div id="onboarding" class="hidden">
+  <div class="ob-slides" id="obSlides"></div>
+  <div class="ob-dots" id="obDots"></div>
+  <div class="ob-actions">
+    <button class="btn ghost" id="obSkip"></button>
+    <button class="btn primary" id="obNext"></button>
+  </div>
+  <div class="ob-lang" id="obLang">
+    <div class="ob-lang-title" id="obLangTitle"></div>
+    <div class="seg" id="langSeg">
+      <button data-lang="ar" class="on">العربية</button>
+      <button data-lang="fr">Français</button>
+      <button data-lang="en">English</button>
+    </div>
+  </div>
+  <form class="ob-profile hidden" id="profileForm">
+    <h2 id="pTitle"></h2><p class="muted" id="pSub"></p>
+    <label><span data-i="pName"></span><input id="fName" type="text" maxlength="30" required></label>
+    <label><span data-i="pSex"></span>
+      <div class="seg" id="sexSeg"><button type="button" data-v="m" class="on"></button><button type="button" data-v="f"></button></div>
+    </label>
+    <div class="row2">
+      <label><span data-i="pAge"></span><input id="fAge" type="number" min="10" max="100" inputmode="numeric" required></label>
+      <label><span data-i="pHeight"></span><input id="fHeight" type="number" min="100" max="230" inputmode="numeric" required></label>
+    </div>
+    <div class="row2">
+      <label><span data-i="pWeight"></span><input id="fWeight" type="number" min="30" max="300" step="0.5" inputmode="decimal" required></label>
+      <label><span data-i="pActivity"></span>
+        <select id="fActivity"><option value="1.2"></option><option value="1.375"></option><option value="1.55"></option><option value="1.725"></option></select>
+      </label>
+    </div>
+    <label><span data-i="pGoal"></span>
+      <div class="seg" id="goalSeg"><button type="button" data-v="lose"></button><button type="button" data-v="keep" class="on"></button><button type="button" data-v="gain"></button></div>
+    </label>
+    <div class="kcal-preview" id="kcalPreview"></div>
+    <button class="btn primary big" type="submit" id="pSave"></button>
+  </form>
+</div>
+
+<!-- App -->
+<div id="app" class="hidden">
+  <header id="topbar">
+    <div>
+      <div class="tb-hello" id="tbHello"></div>
+      <div class="tb-date" id="tbDate"></div>
+    </div>
+    <button class="icon-btn" id="btnSettings" aria-label="settings">
+      <svg viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm9 4a7 7 0 0 0-.1-1.2l2-1.6-2-3.4-2.4 1a7 7 0 0 0-2-1.2L16 3h-4l-.5 2.6a7 7 0 0 0-2 1.2l-2.4-1-2 3.4 2 1.6a7 7 0 0 0 0 2.4l-2 1.6 2 3.4 2.4-1a7 7 0 0 0 2 1.2L12 21h4l.5-2.6a7 7 0 0 0 2-1.2l2.4 1 2-3.4-2-1.6A7 7 0 0 0 21 12z" fill="currentColor" transform="scale(.9) translate(1.3,1.3)"/></svg>
+    </button>
+  </header>
+
+  <main id="views">
+    <!-- HOME -->
+    <section class="view" id="view-home">
+      <div class="card ring-card">
+        <div class="ring-wrap">
+          <svg class="ring" viewBox="0 0 120 120">
+            <circle class="ring-bg" cx="60" cy="60" r="52"/>
+            <circle class="ring-fg" id="ringFg" cx="60" cy="60" r="52"/>
+          </svg>
+          <div class="ring-center">
+            <div class="ring-num" id="ringNum">0</div>
+            <div class="ring-label" id="ringLabel"></div>
+          </div>
+        </div>
+        <div class="ring-side">
+          <div class="rs-row"><span data-i="eaten"></span><b id="statEaten">0</b></div>
+          <div class="rs-row"><span data-i="target"></span><b id="statTarget">0</b></div>
+        </div>
+      </div>
+      <div class="macros">
+        <div class="card macro"><div class="m-top"><span data-i="protein"></span><b id="mP">0<span data-i="g"></span></b></div><div class="bar"><i id="bP"></i></div></div>
+        <div class="card macro"><div class="m-top"><span data-i="carbs"></span><b id="mC">0<span data-i="g"></span></b></div><div class="bar"><i id="bC"></i></div></div>
+        <div class="card macro"><div class="m-top"><span data-i="fat"></span><b id="mF">0<span data-i="g"></span></b></div><div class="bar"><i id="bF"></i></div></div>
+      </div>
+      <div class="card water-card">
+        <div class="w-info"><span class="w-ico">💧</span><div><b data-i="water"></b><div class="muted" id="waterTxt"></div></div></div>
+        <div class="w-btns">
+          <button class="chip" data-water="-250">−250</button>
+          <button class="chip on" data-water="250">+250</button>
+          <button class="chip" data-water="500">+500</button>
+        </div>
+      </div>
+      <div class="sec-head"><h3 data-i="todayMeals"></h3><button class="link" id="goScan1" data-i="addMeal"></button></div>
+      <div id="homeMeals" class="meals"></div>
+    </section>
+
+    <!-- DIARY -->
+    <section class="view hidden" id="view-diary">
+      <div class="day-nav">
+        <button class="icon-btn" id="dayPrev">‹</button>
+        <div class="day-label" id="dayLabel"></div>
+        <button class="icon-btn" id="dayNext">›</button>
+      </div>
+      <div class="card day-total" id="dayTotal"></div>
+      <div id="diaryMeals" class="meals"></div>
+    </section>
+
+    <!-- SCAN -->
+    <section class="view hidden" id="view-scan">
+      <div id="scanHome">
+        <div class="scan-hero">
+          <div class="scan-frame"><span></span><span></span><span></span><span></span>
+            <svg viewBox="0 0 64 64" width="56" height="56"><use href="icon.svg#logo"/></svg>
+          </div>
+        </div>
+        <button class="btn primary big" id="btnTake"></button>
+        <div class="row2">
+          <button class="btn ghost" id="btnGallery"></button>
+          <button class="btn ghost" id="btnManual"></button>
+        </div>
+        <input type="file" id="fileCam" accept="image/*" capture="environment" class="hidden">
+        <input type="file" id="fileGal" accept="image/*" class="hidden">
+      </div>
+
+      <div id="scanAnalyzing" class="hidden">
+        <div class="an-img-wrap"><img id="anImg" alt=""><div class="an-line"></div></div>
+        <div class="an-txt" id="anTxt"></div>
+        <div class="muted center" id="anHint"></div>
+      </div>
+
+      <div id="scanResults" class="hidden">
+        <div class="dish-name" id="dishName"></div>
+        <div class="muted small-txt est-note" data-i="estNote"></div>
+        <div id="scanItems"></div>
+        <div class="card total-card" id="scanTotal"></div>
+        <div class="seg meal-seg" id="mealSeg">
+          <button data-meal="breakfast"></button><button data-meal="lunch" class="on"></button><button data-meal="dinner"></button><button data-meal="snack"></button>
+        </div>
+        <button class="btn primary big" id="btnLogMeal"></button>
+        <button class="btn ghost big" id="btnRetake"></button>
+      </div>
+
+      <div id="scanManual" class="hidden">
+        <div class="search-row">
+          <input id="searchInput" type="search">
+          <button class="btn primary" id="btnSearch"></button>
+        </div>
+        <div id="searchResults"></div>
+      </div>
+    </section>
+
+    <!-- PROGRESS -->
+    <section class="view hidden" id="view-progress">
+      <div class="card"><h3 data-i="weekKcal"></h3><canvas id="chartWeek" height="150"></canvas>
+        <div class="muted" id="avgKcal"></div></div>
+      <div class="card"><h3 data-i="weightLog"></h3><canvas id="chartWeight" height="130"></canvas>
+        <button class="btn ghost" id="btnAddWeight" style="margin-top:8px" data-i="addWeight"></button></div>
+    </section>
+
+    <!-- ASSISTANT -->
+    <section class="view hidden" id="view-ai">
+      <div class="ai-note muted" data-i="aiDisclaimer"></div>
+      <div id="chatBox"></div>
+      <div class="ai-sugs" id="aiSugs"></div>
+    </section>
+  </main>
+
+  <div id="chatBar" class="hidden">
+    <input id="chatInput" type="text">
+    <button class="send-btn" id="btnSend">➤</button>
+  </div>
+
+  <nav id="bottomnav">
+    <button data-view="home" class="on"><svg viewBox="0 0 24 24"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1z" fill="currentColor"/></svg><span data-i="navHome"></span></button>
+    <button data-view="diary"><svg viewBox="0 0 24 24"><path d="M5 4h14a1 1 0 0 1 1 1v15l-4-3-4 3-4-3-4 3V5a1 1 0 0 1 1-1zm3 4h8v2H8zm0 4h8v2H8z" fill="currentColor"/></svg><span data-i="navDiary"></span></button>
+    <button data-view="scan" class="scan-fab"><span class="fab-ring"><svg viewBox="0 0 24 24"><path d="M4 7h3l2-3h6l2 3h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1zm8 3a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9z" fill="currentColor"/></svg></span><span data-i="navScan"></span></button>
+    <button data-view="progress"><svg viewBox="0 0 24 24"><path d="M4 20V10h3v10zm6.5 0V4h3v16zM17 20v-7h3v7z" fill="currentColor"/></svg><span data-i="navProgress"></span></button>
+    <button data-view="ai"><svg viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.4-1.2 4.2-3 5.7V17a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-2.3C6.2 13.2 5 11.4 5 9a7 7 0 0 1 7-7zm-3 18h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1z" fill="currentColor"/></svg><span data-i="navAI"></span></button>
+  </nav>
+
+  <!-- Settings sheet -->
+  <div id="settingsSheet" class="sheet hidden">
+    <div class="sheet-card">
+      <div class="sheet-head"><h3 data-i="setTitle"></h3><button class="icon-btn" id="closeSettings">✕</button></div>
+      <div class="set-row"><span data-i="language"></span>
+        <div class="seg small" id="setLangSeg"><button data-lang="ar">ع</button><button data-lang="fr">FR</button><button data-lang="en">EN</button></div></div>
+      <div class="set-row"><span data-i="theme"></span>
+        <div class="seg small" id="themeSeg"><button data-theme="dark"></button><button data-theme="light"></button></div></div>
+      <button class="set-item" id="btnEditProfile"><span data-i="profileEdit"></span><span>›</span></button>
+      <button class="set-item" id="btnExport"><span data-i="exportData"></span><span>›</span></button>
+      <button class="set-item" id="btnAiConsent"><span data-i="aiConsentSet"></span><span id="aiConsentState" class="muted"></span></button>
+      <button class="set-item danger" id="btnClear"><span data-i="clearData"></span><span>›</span></button>
+      <div class="muted center small-txt" id="privacyTxt"></div>
+    </div>
+  </div>
+
+  <!-- Match picker modal -->
+  <div id="matchModal" class="sheet hidden">
+    <div class="sheet-card">
+      <div class="sheet-head"><h3 data-i="searchFood"></h3><button class="icon-btn" id="closeMatch">✕</button></div>
+      <div class="search-row"><input id="matchInput" type="search"><button class="btn primary" id="btnMatchSearch"></button></div>
+      <div id="matchResults"></div>
+    </div>
+  </div>
+
+  <!-- AI consent sheet -->
+  <div id="aiConsentSheet" class="sheet hidden">
+    <div class="sheet-card">
+      <div class="sheet-head"><h3 data-i="aiConsentTitle"></h3></div>
+      <div class="muted consent-body" data-i="aiConsentBody"></div>
+      <button class="btn primary" id="btnAiYes" data-i="aiConsentYes"></button>
+      <button class="btn ghost" id="btnAiNo" data-i="aiConsentNo"></button>
+    </div>
+  </div>
+
+  <div id="toast" class="hidden"></div>
+</div>
+
+<script src="config.js"></script>
+<script src="i18n.js"></script>
+<script src="fooddb.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
