@@ -17,7 +17,7 @@ export default async function handler(req, res) {
   if (!key) return res.status(500).json({ ok: false, error: 'GEMINI_API_KEY not set' });
 
   const { messages = [], lang = 'ar' } = req.body || {};
-  const langName = { ar: 'Moroccan Arabic (Darija), simple and friendly', fr: 'French', en: 'English' }[lang] || 'Arabic';
+  const langName = { ar: 'Modern Standard Arabic (الفصحى), clear and simple; never Darija or any dialect, even if the user writes in Darija', fr: 'French', en: 'English' }[lang] || 'Modern Standard Arabic';
   const sys =
     `You are NutriVision, a friendly nutrition assistant inside a food-tracking app. ` +
     `Always reply in ${langName}. Keep answers short (max 120 words), practical and encouraging. ` +
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
   if (!contents.length) return res.status(400).json({ ok: false, error: 'messages required' });
 
   try {
-    const model = process.env.GEMINI_MODEL || 'gemini-flash-latest';
+    const model = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
     const r = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
       {
