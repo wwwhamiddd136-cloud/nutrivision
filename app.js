@@ -35,7 +35,7 @@ function applyLang(){
   $('#searchInput').placeholder=t('searchPh'); $('#btnSearch').textContent=t('searchFood');
   $('#matchInput').placeholder=t('searchPh'); $('#btnMatchSearch').textContent=t('searchFood');
   $('#chatInput').placeholder=t('aiPh');
-  $('#privacyTxt').textContent=t('privacyNote')+' · NutriVision AI v1.1.3';
+  $('#privacyTxt').textContent=t('privacyNote')+' · NutriVision AI v1.1.4';
   // profile form labels
   $('#pTitle').textContent=t('pTitle'); $('#pSub').textContent=t('pSub');
   $('#pSave').textContent=t('start'); $('#obLangTitle').textContent=t('chooseLang');

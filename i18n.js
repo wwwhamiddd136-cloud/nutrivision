@@ -48,6 +48,7 @@ ar: {
   about: 'حول التطبيق', version: 'الإصدار', privacyNote: 'يبقى تتبّعك على هاتفك. فقط صور ورسائل المسح والمساعد هي ما يُرسَل إلى Gemini (بموافقتك).',
   aiConsentTitle: 'الذكاء الاصطناعي والخصوصية',
   account: 'الحساب', email: 'البريد الإلكتروني', password: 'كلمة المرور', signIn: 'تسجيل الدخول', signUp: 'إنشاء حساب', signOut: 'تسجيل الخروج',
+  authOr: 'أو', googleSignIn: 'تسجيل الدخول بحساب جوجل',
   signedInAs: 'مسجَّل باسم:', welcomeBack: 'مرحباً بعودتك', authNeedBoth: 'أدخل البريد الإلكتروني وكلمة المرور', authNotConfigured: 'الحسابات غير مفعّلة',
   authCheckEmail: 'تحقّق من بريدك الإلكتروني لتأكيد الحساب', authErr: 'حدث خطأ، حاول مرة أخرى',
   authPrivacy: 'إذا سجّلت، يُحفَظ فقط البريد الإلكتروني والملف الشخصي (الاسم والقياسات) لدى Supabase لتتم مزامنتهما بين أجهزتك. يبقى الطعام والوزن على هاتفك.',
@@ -109,6 +110,7 @@ fr: {
   about: 'À propos', version: 'Version', privacyNote: "Votre suivi reste sur votre téléphone. Seules les photos et les messages de l'assistant IA sont envoyés à Gemini (avec votre accord).",
   aiConsentTitle: 'IA et confidentialité',
   account: 'Compte', email: 'E-mail', password: 'Mot de passe', signIn: 'Se connecter', signUp: 'Créer un compte', signOut: 'Se déconnecter',
+  authOr: 'ou', googleSignIn: 'Se connecter avec Google',
   signedInAs: 'Connecté :', welcomeBack: 'Bon retour', authNeedBoth: 'Entrez e-mail et mot de passe', authNotConfigured: 'Comptes non activés',
   authCheckEmail: 'Vérifiez votre e-mail pour confirmer le compte', authErr: 'Erreur, réessayez',
   authPrivacy: "Si vous créez un compte, seuls l'e-mail et le profil (nom, mensurations) sont stockés chez Supabase pour la synchronisation. Repas et poids restent sur votre téléphone.",
@@ -124,6 +126,7 @@ fr: {
 },
 en: {
   account: 'Account', email: 'Email', password: 'Password', signIn: 'Sign in', signUp: 'Create account', signOut: 'Sign out',
+  authOr: 'or', googleSignIn: 'Sign in with Google',
   signedInAs: 'Signed in as', welcomeBack: 'Welcome back', authNeedBoth: 'Enter email and password', authNotConfigured: 'Accounts not enabled',
   authCheckEmail: 'Check your email to confirm the account', authErr: 'Something went wrong, try again',
   authPrivacy: 'If you create an account, only your email and profile (name, body stats) are stored with Supabase to sync across devices. Meals and weight stay on your phone.',

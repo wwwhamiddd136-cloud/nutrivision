@@ -1,5 +1,5 @@
 /* NutriVision AI service worker — app-shell cache, network-first for API */
-const CACHE = 'nutrivision-v6';
+const CACHE = 'nutrivision-v7';
 const SHELL = [
   './', './index.html', './styles.css', './config.js', './i18n.js', './fooddb.js', './app.js', './supabase.js', './auth.js', './authui.js',
   './manifest.webmanifest', './icon.svg', './icon-192.png', './icon-512.png'

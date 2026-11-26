@@ -7,10 +7,24 @@
   const ready = !!(url && key && window.supabase);
   let sb = null, user = null;
 
+  const isNative = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+  const plugins = (window.Capacitor && window.Capacitor.Plugins) || {};
+
   if (ready) {
     sb = window.supabase.createClient(url, key, {
-      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+      auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, flowType: 'pkce' }
     });
+    // Android APK: Google sign-in runs in the system browser and returns via ma.nutrivision.app://
+    if (isNative && plugins.App) {
+      plugins.App.addListener('appUrlOpen', async ({ url }) => {
+        if (!url || url.indexOf('auth/callback') === -1) return;
+        try {
+          if (url.indexOf('code=') !== -1) await sb.auth.exchangeCodeForSession(url);
+          // implicit-flow hash URLs are picked up by detectSessionInUrl instead
+        } catch (e) { /* session listener will stay signed out */ }
+        try { if (plugins.Browser) await plugins.Browser.close(); } catch (e) {}
+      });
+    }
     sb.auth.onAuthStateChange(async (ev, session) => {
       user = session ? session.user : null;
       if (ev === 'SIGNED_IN') await pullProfile();
@@ -32,6 +46,20 @@
     return { error };
   }
   async function signOut() { if (sb) await sb.auth.signOut(); user = null; }
+  async function signInWithGoogle() {
+    if (!ready) return { error: { message: 'auth not configured' } };
+    const redirectTo = isNative ? 'ma.nutrivision.app://auth/callback' : window.location.origin + '/';
+    const { data, error } = await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo, skipBrowserRedirect: isNative }
+    });
+    if (!error && isNative && data && data.url && plugins.Browser) {
+      await plugins.Browser.open({ url: data.url });
+    } else if (!error && isNative && data && data.url) {
+      window.location.href = data.url; // last resort if the Browser plugin is missing
+    }
+    return { error };
+  }
 
   function rowFromState() {
     const p = window.S ? S.profile : null;
@@ -64,6 +92,6 @@
       if (!$('#app').classList.contains('hidden')) go('home');
     }
   }
-  window.NVAuth = { ready, signIn, signUp, signOut, pushProfile,
+  window.NVAuth = { ready, signIn, signUp, signOut, signInWithGoogle, pushProfile,
     get user() { return user; } };
 })();
