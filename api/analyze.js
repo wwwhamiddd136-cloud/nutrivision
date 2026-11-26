@@ -31,7 +31,7 @@ export default async function handler(req, res) {
     `name_en must be plain searchable food names, not descriptions of the photo. If this is not food, return {"dish":"", "items":[]}.`;
 
   try {
-    const model = process.env.GEMINI_MODEL || 'gemini-flash-latest';
+    const model = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
     const r = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
       {
