@@ -1,12 +1,52 @@
 /* POST /api/analyze — Gemini vision: identify meal ingredients + estimated grams.
    Body: {image: dataURL(base64 jpeg), lang: 'ar'|'fr'|'en'}
    Returns: {ok:true, dish, dish_en, items:[{name, name_en, grams, confidence}]}
+   Robust: retries the primary model, then falls back to a second model.
    Gemini key lives ONLY here (env GEMINI_API_KEY). */
 const CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type'
 };
+
+const PRIMARY = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
+const FALLBACK = process.env.GEMINI_MODEL_FALLBACK || 'gemini-3.1-flash-lite';
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+async function callGemini(key, model, prompt, b64) {
+  const ctrl = new AbortController();
+  const to = setTimeout(() => ctrl.abort(), 45000);
+  try {
+    const r = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+        signal: ctrl.signal,
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }, { inline_data: { mime_type: 'image/jpeg', data: b64 } }] }],
+          generationConfig: { temperature: 0.2, maxOutputTokens: 1200 }
+        })
+      }
+    );
+    return r;
+  } finally {
+    clearTimeout(to);
+  }
+}
+
+function extractJson(text) {
+  const clean = String(text || '').replace(/```json|```/g, '').trim();
+  try { return JSON.parse(clean); } catch (e) { /* fall through */ }
+  const start = clean.indexOf('{');
+  const end = clean.lastIndexOf('}');
+  if (start !== -1 && end > start) {
+    try { return JSON.parse(clean.slice(start, end + 1)); } catch (e) { /* fall through */ }
+  }
+  return null;
+}
+
 export default async function handler(req, res) {
   Object.entries(CORS).forEach(([k, v]) => res.setHeader(k, v));
   if (req.method === 'OPTIONS') return res.status(204).end();
@@ -30,33 +70,35 @@ export default async function handler(req, res) {
     `Rules: list each visible ingredient separately (max 10). Estimate realistic gram weights for the portions shown. ` +
     `name_en must be plain searchable food names, not descriptions of the photo. If this is not food, return {"dish":"", "items":[]}.`;
 
-  try {
-    const model = process.env.GEMINI_MODEL || 'gemini-3.5-flash-lite';
-    const r = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }, { inline_data: { mime_type: 'image/jpeg', data: b64 } }] }],
-          generationConfig: { temperature: 0.2, maxOutputTokens: 1200, response_mime_type: 'application/json' }
-        })
+  // Try: primary, primary again (rate limits are often transient), then fallback model.
+  const attempts = [PRIMARY, PRIMARY, FALLBACK];
+  let lastStatus = 0;
+  for (let i = 0; i < attempts.length; i++) {
+    const model = attempts[i];
+    try {
+      const r = await callGemini(key, model, prompt, b64);
+      lastStatus = r.status;
+      if (!r.ok) {
+        // Retry on rate limit / overload / server errors; give up fast on permanent ones.
+        if ([429, 500, 502, 503, 504].includes(r.status)) { await sleep(1200 * (i + 1)); continue; }
+        return res.status(502).json({ ok: false, error: 'gemini ' + r.status });
       }
-    );
-    if (!r.ok) return res.status(502).json({ ok: false, error: 'gemini ' + r.status });
-    const data = await r.json();
-    let text = data?.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '';
-    text = text.replace(/```json|```/g, '').trim();
-    const parsed = JSON.parse(text);
-    if (!Array.isArray(parsed.items)) parsed.items = [];
-    parsed.items = parsed.items.slice(0, 10).map(it => ({
-      name: String(it.name || it.name_en || '').slice(0, 80),
-      name_en: String(it.name_en || it.name || '').slice(0, 80),
-      grams: Math.max(1, Math.min(2000, Math.round(Number(it.grams) || 100))),
-      confidence: ['high', 'medium', 'low'].includes(it.confidence) ? it.confidence : 'medium'
-    }));
-    return res.status(200).json({ ok: true, dish: String(parsed.dish || '').slice(0, 120), dish_en: String(parsed.dish_en || '').slice(0, 120), items: parsed.items });
-  } catch (e) {
-    return res.status(502).json({ ok: false, error: 'analyze failed' });
+      const data = await r.json();
+      const text = data?.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '';
+      const parsed = extractJson(text);
+      if (!parsed) { await sleep(800); continue; }
+      if (!Array.isArray(parsed.items)) parsed.items = [];
+      parsed.items = parsed.items.slice(0, 10).map(it => ({
+        name: String(it.name || it.name_en || '').slice(0, 80),
+        name_en: String(it.name_en || it.name || '').slice(0, 80),
+        grams: Math.max(1, Math.min(2000, Math.round(Number(it.grams) || 100))),
+        confidence: ['high', 'medium', 'low'].includes(it.confidence) ? it.confidence : 'medium'
+      }));
+      return res.status(200).json({ ok: true, dish: String(parsed.dish || '').slice(0, 120), dish_en: String(parsed.dish_en || '').slice(0, 120), items: parsed.items });
+    } catch (e) {
+      lastStatus = 0; // network error / timeout — try next attempt
+      await sleep(1000 * (i + 1));
+    }
   }
+  return res.status(502).json({ ok: false, error: 'analyze failed' + (lastStatus ? ' (gemini ' + lastStatus + ')' : ' (network)') });
 }

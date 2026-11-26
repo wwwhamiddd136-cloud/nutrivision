@@ -35,7 +35,7 @@ function applyLang(){
   $('#searchInput').placeholder=t('searchPh'); $('#btnSearch').textContent=t('searchFood');
   $('#matchInput').placeholder=t('searchPh'); $('#btnMatchSearch').textContent=t('searchFood');
   $('#chatInput').placeholder=t('aiPh');
-  $('#privacyTxt').textContent=t('privacyNote')+' · NutriVision AI v1.1.2';
+  $('#privacyTxt').textContent=t('privacyNote')+' · NutriVision AI v1.1.3';
   // profile form labels
   $('#pTitle').textContent=t('pTitle'); $('#pSub').textContent=t('pSub');
   $('#pSave').textContent=t('start'); $('#obLangTitle').textContent=t('chooseLang');
@@ -260,17 +260,30 @@ async function apiPost(path, body, timeoutMs){
 }
 function resizeImage(file,maxDim,quality){
   return new Promise((res,rej)=>{
+    const url=URL.createObjectURL(file);
     const img=new Image();
     img.onload=()=>{
-      const k=Math.min(1,maxDim/Math.max(img.width,img.height));
-      const c=document.createElement('canvas');
-      c.width=Math.round(img.width*k); c.height=Math.round(img.height*k);
-      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-      res(c.toDataURL('image/jpeg',quality));
+      URL.revokeObjectURL(url);
+      try{
+        const k=Math.min(1,maxDim/Math.max(img.width,img.height));
+        const c=document.createElement('canvas');
+        c.width=Math.round(img.width*k); c.height=Math.round(img.height*k);
+        c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+        res(c.toDataURL('image/jpeg',quality));
+      }catch(e){ rej(e); }
     };
-    img.onerror=rej;
-    img.src=URL.createObjectURL(file);
+    img.onerror=()=>{ URL.revokeObjectURL(url); rej(new Error('decode')); };
+    img.src=url;
   });
+}
+/* Re-encode until the dataURL fits under ~2.5MB (server + network friendly). */
+async function compressForUpload(file){
+  const qualities=[0.82,0.7,0.55,0.4];
+  for(const q of qualities){
+    const d=await resizeImage(file,1024,q);
+    if(d.length<2_500_000) return d;
+  }
+  return resizeImage(file,768,0.4);
 }
 function resetScan(clearData=true){
   if(clearData){ scanItems=[]; scanDish=''; scanPhoto=''; }
@@ -305,14 +318,27 @@ $('#fileGal').addEventListener('change',e=>handlePhoto(e.target.files[0]));
 async function handlePhoto(file){
   if(!file) return;
   $('#fileCam').value=''; $('#fileGal').value='';
-  scanPhoto=await resizeImage(file,1024,0.82);
-  scanThumb=await resizeImage(file,160,0.7);
+  try{
+    scanPhoto=await compressForUpload(file);
+    scanThumb=await resizeImage(file,160,0.7).catch(()=>scanPhoto);
+  }catch(e){
+    alert(t('scanErr'));
+    return;
+  }
   $('#anImg').src=scanPhoto;
   $('#scanHome').classList.add('hidden');
   $('#scanAnalyzing').classList.remove('hidden');
   try{
-    const r=await apiPost('/api/analyze',{image:scanPhoto,lang:S.profile.lang},60000);
-    if(!r.ok||!r.items||!r.items.length) throw new Error('bad');
+    let r=null,lastErr=null;
+    for(let attempt=0;attempt<3;attempt++){
+      try{
+        r=await apiPost('/api/analyze',{image:scanPhoto,lang:S.profile.lang},90000);
+        if(r&&r.ok) break;
+        lastErr=new Error('bad'); r=null;
+      }catch(e){ lastErr=e; }
+      if(attempt<2) await new Promise(res=>setTimeout(res,1500*(attempt+1)));
+    }
+    if(!r||!r.ok||!r.items||!r.items.length) throw (lastErr||new Error('bad'));
     scanDish=r.dish||'';
     scanItems=r.items.slice(0,12).map(it=>({name:it.name||it.name_en,nameEn:it.name_en||it.name,grams:Math.round(it.grams)||100,conf:it.confidence||'medium',match:null}));
     // nutrition lookup per item
